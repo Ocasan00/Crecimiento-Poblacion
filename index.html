@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crecimiento Poblacional del Estado de Puebla</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./static/css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <!-- Navegación -->
+    <nav class="glass-nav">
+        <div class="logo">Puebla<span class="accent">Data</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Inicio</a></li>
+            <li><a href="#storytelling">Historia</a></li>
+            <li><a href="#mapa-seccion">Mapa</a></li>
+            <li><a href="#modelo-matematico">Modelo Matemático</a></li>
+            <li><a href="#simulador">Simulador</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="hero">
+        <div class="hero-content glass-panel">
+            <div class="hero-top">
+                <div class="hero-text">
+                    <h1>Análisis del Crecimiento Poblacional de <span class="accent">Puebla</span></h1>
+                    <p>Descubre cómo ha evolucionado la población del estado a través de modelos matemáticos e interactivos.</p>
+                </div>
+                <div class="hero-graphic">
+                    <img src="./static/images/puebla.png" alt="Silueta de Puebla" class="puebla-silhouette">
+                </div>
+            </div>
+            
+            <div class="kpi-container">
+                <div class="kpi">
+                    <h3>Población Inicial (1990)</h3>
+                    <p class="kpi-value">4,118,059</p>
+                </div>
+                <div class="kpi">
+                    <h3>Población Actual (2020)</h3>
+                    <p class="kpi-value">6,583,278</p>
+                </div>
+                <div class="kpi">
+                    <h3>Tasa Crecimiento Anual</h3>
+                    <p class="kpi-value">~1.4%</p>
+                </div>
+                <div class="kpi">
+                    <h3>Predicción (2030)</h3>
+                    <p class="kpi-value" id="kpi-prediccion">Calculando...</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Storytelling Section -->
+        <section id="storytelling" class="section">
+            <h2 class="section-title">La Historia de Nuestro Crecimiento</h2>
+            
+            <div class="story-chapter glass-card">
+                <div class="story-text">
+                    <h3>Capítulo 1: ¿Cómo ha crecido Puebla?</h3>
+                    <p>En las últimas décadas, el estado de Puebla ha experimentado un crecimiento demográfico sostenido, impulsado por el desarrollo industrial y urbano. Desde los 4 millones de habitantes en 1990, hemos llegado a más de 6.5 millones en 2020.</p>
+                </div>
+                <div class="story-visual">
+                    <canvas id="chartHistorico"></canvas>
+                </div>
+            </div>
+
+            <div class="story-chapter glass-card reverse">
+                <div class="story-text">
+                    <h3>Capítulo 2: ¿Qué patrón matemático sigue?</h3>
+                    <p>El crecimiento no es lineal. En condiciones ideales, las poblaciones tienden a crecer de forma proporcional a su tamaño actual. Esto se describe perfectamente con una <strong>ecuación exponencial</strong>:</p>
+                    <div class="math-display">
+                        $$ P(t) = P_0 \cdot e^{rt} $$
+                    </div>
+                    <ul>
+                        <li><strong>\(P(t)\):</strong> Población futura</li>
+                        <li><strong>\(P_0\):</strong> Población inicial</li>
+                        <li><strong>\(r\):</strong> Tasa de crecimiento</li>
+                        <li><strong>\(t\):</strong> Tiempo en años</li>
+                    </ul>
+                </div>
+                <div class="story-visual">
+                    <canvas id="chartExponencial"></canvas>
+                </div>
+            </div>
+
+            <div class="story-chapter glass-card">
+                <div class="story-text">
+                    <h3>Capítulo 3: ¿Qué sucederá en el futuro?</h3>
+                    <p>Aplicando nuestro modelo exponencial y asumiendo que las condiciones socioeconómicas se mantienen estables, podemos proyectar la población para las próximas décadas.</p>
+                </div>
+                <div class="story-visual">
+                    <canvas id="chartPrediccion"></canvas>
+                </div>
+            </div>
+
+            <div class="story-chapter glass-card reverse">
+                <div class="story-text">
+                    <h3>Capítulo 4: Impacto Social</h3>
+                    <p>El crecimiento implica mayores retos: más vivienda, infraestructura, servicios de salud y educación. Una población creciente exige planeación inteligente y sostenible.</p>
+                </div>
+                <div class="story-visual people-icons" id="people-container">
+                    <!-- Iconos generados por JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapa Interactivo -->
+        <section id="mapa-seccion" class="section bg-light">
+            <h2 class="section-title">Distribución Poblacional</h2>
+            <div class="map-container glass-card">
+                <div id="map"></div>
+                <div class="map-overlay">Mapa interactivo centrado en Puebla de Zaragoza</div>
+            </div>
+        </section>
+
+        <!-- Modelo Matemático y Solución -->
+        <section id="modelo-matematico" class="section">
+            <h2 class="section-title">Fundamento Matemático</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-teoria')">Teoría del Modelo</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-solucion')">Solución Paso a Paso</button>
+            </div>
+
+            <div id="tab-teoria" class="tab-content active glass-card">
+                <h3>Modelo de Crecimiento Exponencial</h3>
+                <p>El modelo asume que la tasa de cambio de la población es proporcional al tamaño de la población misma en cualquier instante de tiempo. Matemáticamente:</p>
+                <div class="math-display">
+                    $$ \frac{dP}{dt} = rP $$
+                </div>
+                <p>Resolviendo esta ecuación diferencial de primer orden, obtenemos:</p>
+                <div class="math-display">
+                    $$ P(t) = P_0 \cdot e^{rt} $$
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h4>Supuestos</h4>
+                        <p>1. No hay restricciones de recursos (espacio, alimento).<br>2. La tasa de crecimiento \(r\) es constante a lo largo del tiempo.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Ventajas</h4>
+                        <p>Es un modelo excelente para estimaciones a corto y mediano plazo en poblaciones que no han alcanzado su capacidad de carga.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Limitaciones</h4>
+                        <p>A muy largo plazo, los recursos limitados frenan el crecimiento (lo que sería mejor descrito por un modelo logístico).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-solucion" class="tab-content glass-card" style="display:none;">
+                <h3>Solución de la Ecuación</h3>
+                <p>Calcularemos la población estimada para el año 2030, usando como base el año 2020.</p>
+                
+                <div class="step-by-step">
+                    <div class="step">
+                        <h4>1. Datos iniciales</h4>
+                        <ul>
+                            <li>Año base: 2020</li>
+                            <li>\(P_0 = 6,583,278\) (Población en 2020)</li>
+                            <li>\(r = 0.014\) (Tasa de crecimiento del 1.4%)</li>
+                            <li>\(t = 10\) años (De 2020 a 2030)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="step">
+                        <h4>2. Sustitución en la fórmula</h4>
+                        <div class="math-display">
+                            $$ P(10) = 6583278 \cdot e^{0.014 \cdot 10} $$
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <h4>3. Desarrollo algebraico</h4>
+                        <div class="math-display">
+                            $$ P(10) = 6583278 \cdot e^{0.14} $$
+                            $$ P(10) = 6583278 \cdot 1.15027 $$
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <h4>4. Resultado e Interpretación</h4>
+                        <div class="math-display">
+                            $$ P(10) \approx 7,572,586 $$
+                        </div>
+                        <p><strong>Conclusión:</strong> Bajo una tasa de crecimiento constante del 1.4% anual, se proyecta que el estado de Puebla alcance aproximadamente 7.57 millones de habitantes para el año 2030.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulador Interactivo -->
+        <section id="simulador" class="section">
+            <h2 class="section-title">Simulador de Crecimiento</h2>
+            <p style="text-align:center; margin-bottom: 2rem;">Ajusta las variables y observa cómo cambia la predicción a futuro.</p>
+            
+            <div class="simulador-container glass-card">
+                <div class="simulador-controls">
+                    <div class="form-group">
+                        <label for="sim-p0">Población Inicial (\(P_0\))</label>
+                        <input type="number" id="sim-p0" value="6583278" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-r">Tasa de Crecimiento (\(r\) en %)</label>
+                        <input type="number" id="sim-r" value="1.4" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-t">Años a Proyectar (\(t\))</label>
+                        <input type="number" id="sim-t" value="20" step="1" max="100">
+                    </div>
+                    <button class="btn-primary" onclick="calcularSimulacion()">Calcular Proyección</button>
+                </div>
+                
+                <div class="simulador-results">
+                    <h3>Resultado Proyectado</h3>
+                    <div class="resultado-numero" id="sim-resultado">--</div>
+                    <canvas id="chartSimulador"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Proyecto Universitario - Análisis de Crecimiento Poblacional del Estado de Puebla</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Custom JS -->
+    <script src="./static/js/main.js"></script>
+</body>
+</html>
